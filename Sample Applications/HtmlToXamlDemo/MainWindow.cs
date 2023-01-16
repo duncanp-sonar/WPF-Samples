@@ -2,6 +2,8 @@
 // // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Markup;
 
 namespace HtmlToXamlDemo
 {
@@ -12,8 +14,20 @@ namespace HtmlToXamlDemo
     {
         public void ConvertContent(object sender, RoutedEventArgs e)
         {
-            myTextBox.Text = HtmlToXamlConverter.ConvertHtmlToXaml(myTextBox.Text, true);
-            MessageBox.Show("Content Conversion Complete!");
+            var converted = HtmlToXamlConverter.ConvertHtmlToXaml(myTextBox.Text, true);
+            txtConverted.Text = converted;
+
+            // Can't shared the document between controls, so we need to create a new
+            // instance each time.
+            docReader.Document = TryCreateDoc(converted);
+            docScrollViewer.Document = TryCreateDoc(converted);
+            docPgeViewer.Document = TryCreateDoc(converted);
+        }
+
+        private static FlowDocument TryCreateDoc(string text)
+        {
+            var xaml = XamlReader.Parse(text);
+            return xaml as FlowDocument;
         }
 
         public void CopyXaml(object sender, RoutedEventArgs e)

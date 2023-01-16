@@ -5,20 +5,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HtmlToXamlDemo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Border Background="LightSteelBlue" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Top"
-            BorderBrush="DarkSlateGray" BorderThickness="1">
+        Title="MainWindow" Height="700" Width="700">
+        <Grid>
+    <!--<Border Background="LightSteelBlue" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Top"
+            BorderBrush="DarkSlateGray" BorderThickness="1">-->
+            
         <TabControl Margin="5">
             <TabItem Header="HTML to XAML">
-                <StackPanel Margin="10">
-                    <TextBlock Margin="10" TextWrapping="Wrap">Paste HTML Content in the TextBox below, then press the "Convert" button to convert the HTML to a XAML FlowDocument.</TextBlock>
-                    <TextBox Margin="10" Name="myTextBox" BorderBrush="DarkSlateBlue" HorizontalAlignment="Stretch"
-                             MinHeight="200" MaxHeight="400" xml:space="preserve" AcceptsReturn="True" />
-                    <StackPanel Orientation="Horizontal" Margin="5">
+                <DockPanel Margin="10">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+                        <TextBlock 
+                            DockPanel.Dock="Top"
+                            Margin="10" TextWrapping="Wrap">Paste HTML Content in the TextBox below, then press the "Convert" button to convert the HTML to a XAML FlowDocument.</TextBlock>
+
+                        <TextBox Margin="10" Name="myTextBox" BorderBrush="DarkSlateBlue" HorizontalAlignment="Stretch"
+                                     MinHeight="200" MaxHeight="200" xml:space="preserve" AcceptsReturn="True" />
+
+                    </StackPanel>
+                    
+                    <StackPanel DockPanel.Dock="Bottom"
+                        Orientation="Horizontal" Margin="5">
                         <Button Click="ConvertContent" Margin="5">Convert!</Button>
                         <Button Click="CopyXaml" Margin="5">Copy to Clipboard</Button>
                     </StackPanel>
-                </StackPanel>
+
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                        <TextBox x:Name="txtConverted" Margin="10" MinHeight="100"/>
+                    </ScrollViewer>
+                </DockPanel>
             </TabItem>
 
             <TabItem Header="XAML to HTML">
@@ -33,6 +47,17 @@
                 </StackPanel>
             </TabItem>
 
+            <TabItem Header="Converted XAML - reader">
+                <FlowDocumentReader x:Name="docReader" />
+            </TabItem>
+            <TabItem Header="Converted XAML - page viewer">
+                <FlowDocumentPageViewer x:Name="docPgeViewer" />
+            </TabItem>
+            <TabItem Header="Converted XAML - scroll viewer">
+                <FlowDocumentScrollViewer x:Name="docScrollViewer" />
+            </TabItem>
         </TabControl>
-    </Border>
+    <!--</Border>-->
+    </Grid>
+
 </Window>
