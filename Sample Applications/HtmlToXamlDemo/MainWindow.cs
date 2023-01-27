@@ -13,6 +13,23 @@ namespace HtmlToXamlDemo
     /// </summary>
     public partial class MainWindow : Window
     {
+        public override void EndInit()
+        {
+            base.EndInit();
+
+            var html = @"<p>Shared naming conventions allow teams to collaborate efficiently. This rule checks that all function names match a provided regular expression.</p>
+<h2>Noncompliant Code Example</h2>
+<p>With default provided regular expression: <code>^[a-z][a-zA-Z0-9]*$</code>:</p>
+<pre>
+void DoSomething (void);
+</pre>
+<h2>Compliant Solution</h2>
+<pre>
+void doSomething (void);
+</pre>";
+            myTextBox.Text = html;
+        }
+
         public void ConvertContent(object sender, RoutedEventArgs e)
         {
             var converted = HtmlToXamlConverter.ConvertHtmlToXaml(myTextBox.Text, true);
@@ -27,6 +44,11 @@ namespace HtmlToXamlDemo
             docReader.Document = TryCreateDoc(converted);
             docScrollViewer.Document = TryCreateDoc(converted);
             docPgeViewer.Document = TryCreateDoc(converted);
+
+            //docReader.Document = TryCreateDoc(convertedNew);
+            //docScrollViewer.Document = TryCreateDoc(convertedNew);
+            //docPgeViewer.Document = TryCreateDoc(convertedNew);
+
         }
 
         private static FlowDocument TryCreateDoc(string text)

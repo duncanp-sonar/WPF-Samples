@@ -2,37 +2,59 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
+using System.Windows.Markup;
 using System.Xml;
 
 namespace HtmlToXamlDemo.XHTMLConverter
 {
     public class XHtmlToXamlConverter
     {
+        private static readonly string XamlNamespace = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
+
         public static string Convert(string xhtml)
             => new XHtmlToXamlConverter().Process(xhtml);
 
-        private XHtmlToXamlConverter() { }
+
+        private XmlWriter writer;
+        private XmlReader reader;
 
         private string Process(string data)
         {
-            var sb = new StringBuilder();
+            data = data.Replace("&nbsp;", "&#160;");
 
-            using (var writer = CreateXmlWriter(sb))
-            using (XmlReader reader = CreateXmlReader(data))
+            var sb = new StringBuilder();
+            writer = CreateXmlWriter(sb);
+
+            reader = CreateXmlReader(data);
+
+            try
             {
+
+                writer.WriteStartElement("FlowDocument", XamlNamespace);
+                //writer.WriteProcessingInstruction("space", "preserve");
+                //writer.WriteAttributeString("xml:space", "preserve");
+//                writer.WriteAttributeString("xmlns", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
+
                 while (reader.Read())
                 {
                     switch (reader.NodeType)
                     {
                         case XmlNodeType.Element:
                             Console.WriteLine("Start Element {0}", reader.Name);
+                            ProcessElement();
+
                             break;
+
                         case XmlNodeType.Text:
-                            Console.WriteLine("Text Node: {0}",
-                                     reader.Value);
+                            Console.WriteLine("Text Node: {0}", reader.Value);
+
+                            writer.WriteString(reader.Value);
                             break;
+
                         case XmlNodeType.EndElement:
                             Console.WriteLine("End Element {0}", reader.Name);
+                            writer.WriteEndElement();
                             break;
                         default:
                             Console.WriteLine("Other node {0} with value {1}",
@@ -40,9 +62,47 @@ namespace HtmlToXamlDemo.XHTMLConverter
                             break;
                     }
                 }
+
+                writer.WriteEndElement(); // FlowDocument
+            }
+            finally
+            {
+                reader.Close();
+                writer.Close();
             }
 
             return sb.ToString();
+        }
+
+        private void ProcessElement()
+        {
+            switch(reader.Name)
+            {
+                case "p" : writer.WriteStartElement("Paragraph");
+                    break;
+
+                case "h2":
+                    writer.WriteStartElement("Paragraph");
+                    writer.WriteAttributeString("FontSize", "20pt");
+                    break;
+
+                case "pre":
+                    writer.WriteStartElement("Paragraph");
+                    writer.WriteAttributeString("FontSize", "8pt");
+                    writer.WriteAttributeString("TextAlignment", "Left");
+                    writer.WriteAttributeString("FontFamily", "CourierNew");
+                    break;
+
+                case "code":
+                    writer.WriteStartElement("Run");
+                    break;
+
+
+                default:
+                    writer.WriteStartElement(reader.Name);
+                    break;
+            }
+
         }
 
         private static XmlReader CreateXmlReader(string data)
@@ -70,6 +130,5 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
             return XmlWriter.Create(stringWriter, settings);
         }
-
     }
 }
