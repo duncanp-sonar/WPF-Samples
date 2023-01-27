@@ -30,11 +30,9 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
             try
             {
-
                 writer.WriteStartElement("FlowDocument", XamlNamespace);
-                //writer.WriteProcessingInstruction("space", "preserve");
-                //writer.WriteAttributeString("xml:space", "preserve");
-//                writer.WriteAttributeString("xmlns", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
+                //writer.WriteAttributeString("space", "xml", "preserve");
+                writer.WriteAttributeString("xmlns", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
 
                 while (reader.Read())
                 {
@@ -90,7 +88,7 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteStartElement("Paragraph");
                     writer.WriteAttributeString("FontSize", "8pt");
                     writer.WriteAttributeString("TextAlignment", "Left");
-                    writer.WriteAttributeString("FontFamily", "CourierNew");
+                    writer.WriteAttributeString("FontFamily", "Courier New");
                     break;
 
                 case "code":
@@ -125,10 +123,12 @@ namespace HtmlToXamlDemo.XHTMLConverter
                 ConformanceLevel = ConformanceLevel.Document,
                 Encoding = Encoding.UTF8,
                 OmitXmlDeclaration = true,
-                Indent = true
+                Indent = true,
+                CloseOutput = true
             };
 
-            return XmlWriter.Create(stringWriter, settings);
+            var writer = XmlWriter.Create(stringWriter, settings);
+            return writer;
         }
     }
 }

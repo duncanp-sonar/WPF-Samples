@@ -45,10 +45,9 @@ void doSomething (void);
             docScrollViewer.Document = TryCreateDoc(converted);
             docPgeViewer.Document = TryCreateDoc(converted);
 
-            //docReader.Document = TryCreateDoc(convertedNew);
-            //docScrollViewer.Document = TryCreateDoc(convertedNew);
-            //docPgeViewer.Document = TryCreateDoc(convertedNew);
-
+            docReaderNew.Document = TryCreateDoc(convertedNew);
+            docScrollViewerNew.Document = TryCreateDoc(convertedNew);
+            docPgeViewerNew.Document = TryCreateDoc(convertedNew);
         }
 
         private static FlowDocument TryCreateDoc(string text)

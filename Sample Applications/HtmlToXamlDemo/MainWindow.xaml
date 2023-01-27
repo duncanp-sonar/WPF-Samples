@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HtmlToXamlDemo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="1200">
+        Title="MainWindow" Height="700" Width="1200" Left="0" Top="0">
         <Grid>
     <!--<Border Background="LightSteelBlue" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Top"
             BorderBrush="DarkSlateGray" BorderThickness="1">-->
@@ -25,7 +25,7 @@
                     
                     <StackPanel DockPanel.Dock="Bottom"
                         Orientation="Horizontal" Margin="5">
-                        <Button Click="ConvertContent" Margin="5">Convert!</Button>
+                        <Button Click="ConvertContent" Margin="5" IsDefault="true" >Convert!</Button>
                         <Button Click="CopyXaml" Margin="5">Copy to Clipboard</Button>
                     </StackPanel>
 
@@ -37,23 +37,56 @@
 
                         <DockPanel Grid.Column="0" LastChildFill="True">
                             <Label DockPanel.Dock="Top">MS converter:</Label>
-                            <ScrollViewer
-                                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                                <TextBox x:Name="txtConverted" Margin="10" MinHeight="100"/>
-                            </ScrollViewer>
+                            <TextBox x:Name="txtConverted" Margin="10" MinHeight="100"
+                                     HorizontalAlignment="Stretch"
+                                     HorizontalScrollBarVisibility="Auto"
+                                     VerticalScrollBarVisibility="Auto"/>
                         </DockPanel>
 
                         <DockPanel Grid.Column="1" LastChildFill="True">
                             <Label DockPanel.Dock="Top">New converter:</Label>
-                            <ScrollViewer
-                                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                                <TextBox x:Name="txtConvertedNew" Margin="10" MinHeight="100"/>
-                            </ScrollViewer>
+                            <TextBox x:Name="txtConvertedNew" Margin="10" MinHeight="100"
+                                     HorizontalAlignment="Stretch"
+                                     HorizontalScrollBarVisibility="Auto"
+                                     VerticalScrollBarVisibility="Auto"/>
                         </DockPanel>
 
                     </Grid>
                     
                 </DockPanel>
+            </TabItem>
+
+            <TabItem Header="Converted XAML - reader">
+                <Grid Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <FlowDocumentReader x:Name="docReader" Grid.Column="0"/>
+                    <FlowDocumentReader x:Name="docReaderNew" Grid.Column="1"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Converted XAML - page viewer">
+                <Grid Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <FlowDocumentPageViewer x:Name="docPgeViewer" Grid.Column="0"/>
+                    <FlowDocumentPageViewer x:Name="docPgeViewerNew" Grid.Column="1"/>
+                </Grid>
+
+            </TabItem>
+            <TabItem Header="Converted XAML - scroll viewer">
+                <Grid Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <FlowDocumentScrollViewer x:Name="docScrollViewer" Grid.Column="0"/>
+                    <FlowDocumentScrollViewer x:Name="docScrollViewerNew" Grid.Column="1"/>
+                </Grid>
             </TabItem>
 
             <TabItem Header="XAML to HTML">
@@ -68,15 +101,6 @@
                 </StackPanel>
             </TabItem>
 
-            <TabItem Header="Converted XAML - reader">
-                <FlowDocumentReader x:Name="docReader" />
-            </TabItem>
-            <TabItem Header="Converted XAML - page viewer">
-                <FlowDocumentPageViewer x:Name="docPgeViewer" />
-            </TabItem>
-            <TabItem Header="Converted XAML - scroll viewer">
-                <FlowDocumentScrollViewer x:Name="docScrollViewer" />
-            </TabItem>
         </TabControl>
     <!--</Border>-->
     </Grid>
