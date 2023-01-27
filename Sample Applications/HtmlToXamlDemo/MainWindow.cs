@@ -1,6 +1,7 @@
 ﻿// // Copyright (c) Microsoft. All rights reserved.
 // // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using HtmlToXamlDemo.XHTMLConverter;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Markup;
@@ -16,6 +17,10 @@ namespace HtmlToXamlDemo
         {
             var converted = HtmlToXamlConverter.ConvertHtmlToXaml(myTextBox.Text, true);
             txtConverted.Text = converted;
+
+            var convertedNew = XHtmlToXamlConverter.Convert(myTextBox.Text);
+            txtConvertedNew.Text = convertedNew;
+
 
             // Can't shared the document between controls, so we need to create a new
             // instance each time.

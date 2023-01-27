@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Text;
 using System.Windows;
 using System.Windows.Documents;
 using System.Xml;
@@ -153,9 +154,20 @@ namespace HtmlToXamlDemo
 
             // Return a string representing resulting Xaml
             xamlFlowDocumentElement.SetAttribute("xml:space", "preserve");
-            var xaml = xamlFlowDocumentElement.OuterXml;
+            //var xaml = xamlFlowDocumentElement.OuterXml;
 
-            return xaml;
+            var formattedOutput = new StringBuilder();
+            var writerSettings = new XmlWriterSettings
+            {
+                Indent = true,
+                Encoding = Encoding.UTF8,
+                OmitXmlDeclaration = true,
+            };
+
+            var writer = XmlWriter.Create(formattedOutput, writerSettings);
+            xamlFlowDocumentElement.WriteTo(writer);
+            writer.Close();
+            return formattedOutput.ToString();
         }
 
         /// <summary>
