@@ -26,7 +26,12 @@ void DoSomething (void);
 <h2>Compliant Solution</h2>
 <pre>
 void doSomething (void);
-</pre>";
+</pre>
+<p>
+<a href=""https://wiki.sei.cmu.edu/confluence/x/1DdGBQ"">CERT, MSC52-J.</a> - Finish every set of statements associated with a case label with a
+  break statement 
+</p>
+";
             myTextBox.Text = html;
         }
 
@@ -35,15 +40,14 @@ void doSomething (void);
             var converted = HtmlToXamlConverter.ConvertHtmlToXaml(myTextBox.Text, true);
             txtConverted.Text = converted;
 
-            var convertedNew = XHtmlToXamlConverter.Convert(myTextBox.Text);
-            txtConvertedNew.Text = convertedNew;
-
-
             // Can't shared the document between controls, so we need to create a new
             // instance each time.
             docReader.Document = TryCreateDoc(converted);
             docScrollViewer.Document = TryCreateDoc(converted);
             docPgeViewer.Document = TryCreateDoc(converted);
+
+            var convertedNew = XHtmlToXamlConverter.Convert(myTextBox.Text);
+            txtConvertedNew.Text = convertedNew;
 
             docReaderNew.Document = TryCreateDoc(convertedNew);
             docScrollViewerNew.Document = TryCreateDoc(convertedNew);

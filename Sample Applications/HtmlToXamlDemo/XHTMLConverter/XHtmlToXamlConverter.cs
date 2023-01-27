@@ -95,9 +95,15 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteStartElement("Run");
                     break;
 
+                case "a":
+                    writer.WriteStartElement("Hyperlink");
+                    var href = reader.GetAttribute("href");
+                    writer.WriteAttributeString("NavigateUri", href);
+                    break;
 
                 default:
                     writer.WriteStartElement(reader.Name);
+                    writer.WriteEndElement();
                     break;
             }
 
