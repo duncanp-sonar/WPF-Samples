@@ -93,7 +93,24 @@ namespace HtmlToXamlDemo.XHTMLConverter
         {
             switch(reader.Name)
             {
-                case "p" : writer.WriteStartElement("Paragraph");
+                case "a":
+                    writer.WriteStartElement("Hyperlink");
+                    var href = reader.GetAttribute("href");
+                    writer.WriteAttributeString("NavigateUri", href);
+                    break;
+
+                case "blockquote":
+                    writer.WriteStartElement("Paragraph");
+                    writer.WriteAttributeString("Margin", "16,0,0,0");
+                    break;
+
+                case "code":
+                    writer.WriteStartElement("Run");
+                    break;
+
+                case "em":
+                    writer.WriteStartElement("Run");
+                    writer.WriteAttributeString("FontStyle", "italic");
                     break;
 
                 case "h2":
@@ -106,19 +123,17 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteAttributeString("FontSize", "18pt");
                     break;
 
-                case "em":
-                    writer.WriteStartElement("Run");
-                    writer.WriteAttributeString("FontStyle", "italic");
-                    break;
-
-                case "strong":
-                    writer.WriteStartElement("Run");
-                    writer.WriteAttributeString("FontWeight", "bold");
-                    break;
-
-                case "blockquote":
+                case "li":
+                    writer.WriteStartElement("ListItem");
                     writer.WriteStartElement("Paragraph");
-                    writer.WriteAttributeString("Margin", "16,0,0,0");
+                    break;
+
+                case "ol":
+                    writer.WriteStartElement("List");
+                    writer.WriteAttributeString("MarkerStyle", "Decimal");
+                    break;
+
+                case "p" : writer.WriteStartElement("Paragraph");
                     break;
 
                 case "pre":
@@ -128,29 +143,14 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteAttributeString("FontFamily", "Courier New");
                     break;
 
-                case "code":
+                case "strong":
                     writer.WriteStartElement("Run");
-                    break;
-
-                case "a":
-                    writer.WriteStartElement("Hyperlink");
-                    var href = reader.GetAttribute("href");
-                    writer.WriteAttributeString("NavigateUri", href);
+                    writer.WriteAttributeString("FontWeight", "bold");
                     break;
 
                 case "ul":
                     writer.WriteStartElement("List");
                     writer.WriteAttributeString("MarkerStyle", "Disc");
-                    break;
-
-                case "ol":
-                    writer.WriteStartElement("List");
-                    writer.WriteAttributeString("MarkerStyle", "Decimal");
-                    break;
-
-                case "li":
-                    writer.WriteStartElement("ListItem");
-                    writer.WriteStartElement("Paragraph");
                     break;
 
                 default:

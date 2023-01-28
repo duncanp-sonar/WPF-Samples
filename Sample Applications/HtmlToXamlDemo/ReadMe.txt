@@ -1,19 +1,18 @@
 ﻿
 DONE:
 ----
-p
+a, attributes: href
+blockquote
 code
+em
 h2
 h3
-pre
-ul
 li
-a, attributes: href
-em
-strong
-blockquote
-
 ol
+p
+pre
+strong
+ul
 
 TODO:
 -----
