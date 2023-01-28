@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
-using System.Windows.Markup;
 using System.Xml;
 
 namespace HtmlToXamlDemo.XHTMLConverter
@@ -31,7 +28,7 @@ namespace HtmlToXamlDemo.XHTMLConverter
             try
             {
                 writer.WriteStartElement("FlowDocument", XamlNamespace);
-                //writer.WriteAttributeString("space", "xml", "preserve");
+                writer.WriteAttributeString("xml", "space", null, "preserve");
                 writer.WriteAttributeString("xmlns", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
 
                 while (reader.Read())
@@ -45,15 +42,11 @@ namespace HtmlToXamlDemo.XHTMLConverter
                             break;
 
                         case XmlNodeType.Text:
-                            //WriteText(reader.Value);
-
                             Console.WriteLine("Text Node: {0}", reader.Value);
                             writer.WriteString(reader.Value);
                             break;
 
                         case XmlNodeType.Whitespace:
-                            //WriteText(reader.Value);
-
                             Console.WriteLine("Text Node: {0}", reader.Value);
                             writer.WriteString(reader.Value);
                             break;
@@ -91,22 +84,6 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
             return sb.ToString();
         }
-
-        //private void WriteText(string text)
-        //{
-        //    if (!text.Contains("\n"))
-        //    {
-        //        writer.WriteString(text);
-        //        return;
-        //    }
-
-        //    var lines = text.Split(new char[] { '\n' }, StringSplitOptions.None);
-        //    foreach(var line in lines)
-        //    {
-        //        writer.WriteString(line);
-        //        writer.WriteElementString("LineBreak", "");
-        //    }
-        //}
 
         private void ProcessElement()
         {

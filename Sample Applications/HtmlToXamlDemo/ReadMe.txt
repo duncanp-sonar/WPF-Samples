@@ -19,7 +19,7 @@ TODO:
 col
 colgroup
 
-Handle linebreaks e.g. in compliant/non-compliant examples.
+DONE: Handle linebreaks e.g. in compliant/non-compliant examples.
 
 
 
