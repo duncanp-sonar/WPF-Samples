@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Security.Permissions;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Markup;
@@ -53,6 +54,43 @@ void doSomething (void);
             myTextBox.Text = html;
 
             cbSampleFiles.ItemsSource = GetSampleFiles();
+
+
+            var input = @"
+<p>To ensure future code portability, obsolete POSIX functions should be removed. Those functions, with their replacements are listed below:</p>
+<table>
+  <colgroup>
+    <col style=""width: 50%;"">
+    <col style=""width: 50%;"">
+  </colgroup>
+ ";
+            var exp = new Regex("<(col[\\s>])[^>]*>");
+            
+            exp = new Regex("<col[/s>]>");
+
+            exp = new Regex("(<col\\s*>|<col\\s+>)");
+
+
+            exp = new Regex("(<col\\s*[^/^>]*>)");
+
+            exp = new Regex("(<col\\s*[^/^>]*>)");
+
+            exp = new Regex("(<col\\s*>)"); // <col     >
+
+            exp = new Regex("(<col\\s*>)|(col\\s+[^/]*>)");
+            exp = new Regex("(?<test>(<col\\s*)|(col\\s+[^/]*))>");
+
+            var matches = exp.Matches(input);
+            var modified = Regex.Replace(input, "(<col\\s*>)|(col\\s+[^/]*>)", "$1XXX");
+
+            modified = Regex.Replace(input, "(?<element>(<col\\s*)|(col\\s+[^/]*))>", "${element}/>");
+
+
+            exp = new Regex("(?<element>((<col\\s*)|(col\\s+[^/^>]*)))>");
+
+            modified = exp.Replace(input, "${element}/>");
+
+
         }
 
         private SampleFile[] GetSampleFiles()
@@ -79,9 +117,10 @@ void doSomething (void);
             docScrollViewer.Document = TryCreateDoc(converted);
             docPgeViewer.Document = TryCreateDoc(converted);
 
+            string convertedNew = "";
             try
             {
-                var convertedNew = XHtmlToXamlConverter.Convert(myTextBox.Text);
+                convertedNew = XHtmlToXamlConverter.Convert(myTextBox.Text);
                 txtConvertedNew.Text = convertedNew;
 
                 docReaderNew.Document = TryCreateDoc(convertedNew);
@@ -90,7 +129,7 @@ void doSomething (void);
             }
             catch (Exception ex)
             {
-                txtConvertedNew.Text = ex.Message + Environment.NewLine + Environment.NewLine + txtConvertedNew;
+                txtConvertedNew.Text = ex.Message + Environment.NewLine + Environment.NewLine + convertedNew;
             }
         }
 

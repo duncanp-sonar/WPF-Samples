@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace HtmlToXamlDemo.XHTMLConverter
@@ -16,9 +17,12 @@ namespace HtmlToXamlDemo.XHTMLConverter
         private XmlWriter writer;
         private XmlReader reader;
 
+
         private string Process(string data)
         {
             data = data.Replace("&nbsp;", "&#160;");
+
+            data = CleanHtml(data);
 
             var sb = new StringBuilder();
             writer = CreateXmlWriter(sb);
@@ -100,6 +104,10 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteAttributeString("Margin", "16,0,0,0");
                     break;
 
+                case "br":
+                    writer.WriteElementString("LineBreak", "");
+                    break;
+
                 case "code":
                     writer.WriteStartElement("Run");
                     break;
@@ -149,6 +157,38 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteAttributeString("MarkerStyle", "Disc");
                     break;
 
+                case "table":
+                    writer.WriteStartElement("Section");
+                    break;
+
+                case "colgroup":
+                    writer.WriteStartElement("Paragraph");
+                    break;
+
+                case "col":
+                    writer.WriteStartElement("Run");
+                    break;
+
+                case "thead":
+                    writer.WriteStartElement("Section");
+                    break;
+
+                case "tr":
+                    writer.WriteStartElement("Paragraph");
+                    break;
+
+                case "th":
+                    writer.WriteStartElement("Run");
+                    break;
+
+                case "tbody":
+                    writer.WriteStartElement("Section");
+                    break;
+
+                case "td":
+                    writer.WriteStartElement("Run");
+                    break;
+
                 default:
                     writer.WriteStartElement(reader.Name);
                     writer.WriteEndElement();
@@ -185,5 +225,17 @@ namespace HtmlToXamlDemo.XHTMLConverter
             var writer = XmlWriter.Create(stringWriter, settings);
             return writer;
         }
+
+        private static Regex cleanCol = new Regex("(?<element>(<col\\s*)|(col\\s+[^/^>]*))>", RegexOptions.Compiled);
+        private static Regex cleanBr = new Regex("(?<element>(<br\\s*)|(br\\s+[^/^>]*))>", RegexOptions.Compiled);
+
+        private static string CleanHtml(string text)
+        {
+            var cleaned = cleanCol.Replace(text, "${element}/>");
+            cleaned = cleanBr.Replace(cleaned, "${element}/>");
+
+            return cleaned;
+        }
+
     }
 }
