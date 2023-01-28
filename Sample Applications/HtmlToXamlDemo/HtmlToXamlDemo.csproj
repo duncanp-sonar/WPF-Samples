@@ -87,6 +87,9 @@
   <ItemGroup>
     <Content Include="ReadMe.txt" />
     <None Include="App.config" />
+    <None Include="SampleFiles\*.desc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

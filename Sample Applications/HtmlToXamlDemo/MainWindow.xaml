@@ -14,6 +14,14 @@
             <TabItem Header="HTML to XAML">
                 <DockPanel Margin="10">
                     <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Html file: </Label>
+                            <ComboBox MinWidth="200" x:Name="cbSampleFiles"
+                                      SelectionChanged="cbSampleFiles_SelectionChanged"
+                                      DisplayMemberPath="DisplayName"
+                                      SelectedValuePath="FullPath"/>
+                        </StackPanel>
+                        
                         <TextBlock 
                             DockPanel.Dock="Top"
                             Margin="10" TextWrapping="Wrap">Paste HTML Content in the TextBox below, then press the "Convert" button to convert the HTML to a XAML FlowDocument.</TextBlock>

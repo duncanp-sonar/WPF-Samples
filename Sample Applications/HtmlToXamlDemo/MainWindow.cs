@@ -3,12 +3,29 @@
 
 using HtmlToXamlDemo.XHTMLConverter;
 using System;
+using System.IO;
+using System.Linq;
+using System.Security.Permissions;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Markup;
 
 namespace HtmlToXamlDemo
 {
+
+    public class SampleFile
+    {
+        public SampleFile(string fullPath, string displayName)
+        {
+            FullPath = fullPath;
+            DisplayName = displayName;
+        }
+
+        public string FullPath { get; }
+        public string DisplayName { get; }
+    }
+
+
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
     /// </summary>
@@ -34,11 +51,26 @@ void doSomething (void);
 </p>
 ";
             myTextBox.Text = html;
+
+            cbSampleFiles.ItemsSource = GetSampleFiles();
+        }
+
+        private SampleFile[] GetSampleFiles()
+        {
+            var sampleDir =Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), "SampleFiles");
+            var files = Directory.GetFiles(sampleDir, "*.*");
+
+            return files.Select(x => new SampleFile(x, Path.GetFileName(x))).ToArray();
         }
 
         public void ConvertContent(object sender, RoutedEventArgs e)
         {
-            var converted = HtmlToXamlConverter.ConvertHtmlToXaml(myTextBox.Text, true);
+            ConvertHtmlToXaml(myTextBox.Text);
+        }
+
+        private void ConvertHtmlToXaml(string text)
+        {
+            var converted = HtmlToXamlConverter.ConvertHtmlToXaml(text, true);
             txtConverted.Text = converted;
 
             // Can't shared the document between controls, so we need to create a new
@@ -52,13 +84,13 @@ void doSomething (void);
                 var convertedNew = XHtmlToXamlConverter.Convert(myTextBox.Text);
                 txtConvertedNew.Text = convertedNew;
 
-                //docReaderNew.Document = TryCreateDoc(convertedNew);
-                //docScrollViewerNew.Document = TryCreateDoc(convertedNew);
-                //docPgeViewerNew.Document = TryCreateDoc(convertedNew);
+                docReaderNew.Document = TryCreateDoc(convertedNew);
+                docScrollViewerNew.Document = TryCreateDoc(convertedNew);
+                docPgeViewerNew.Document = TryCreateDoc(convertedNew);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                txtConvertedNew.Text = ex.Message;
             }
         }
 
@@ -84,6 +116,18 @@ void doSomething (void);
         {
             myTextBox2.SelectAll();
             myTextBox2.Copy();
+        }
+
+        private void cbSampleFiles_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            var filePath = cbSampleFiles.SelectedItem as SampleFile;
+            if (filePath != null && File.Exists(filePath.FullPath))
+            {
+                var text = File.ReadAllText(filePath.FullPath);
+
+                myTextBox.Text = text;
+                ConvertHtmlToXaml(myTextBox.Text);
+            }
         }
     }
 }
