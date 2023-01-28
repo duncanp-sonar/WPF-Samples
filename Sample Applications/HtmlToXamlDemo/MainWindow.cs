@@ -2,6 +2,7 @@
 // // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using HtmlToXamlDemo.XHTMLConverter;
+using System;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Markup;
@@ -46,12 +47,19 @@ void doSomething (void);
             docScrollViewer.Document = TryCreateDoc(converted);
             docPgeViewer.Document = TryCreateDoc(converted);
 
-            var convertedNew = XHtmlToXamlConverter.Convert(myTextBox.Text);
-            txtConvertedNew.Text = convertedNew;
+            try
+            {
+                var convertedNew = XHtmlToXamlConverter.Convert(myTextBox.Text);
+                txtConvertedNew.Text = convertedNew;
 
-            docReaderNew.Document = TryCreateDoc(convertedNew);
-            docScrollViewerNew.Document = TryCreateDoc(convertedNew);
-            docPgeViewerNew.Document = TryCreateDoc(convertedNew);
+                //docReaderNew.Document = TryCreateDoc(convertedNew);
+                //docScrollViewerNew.Document = TryCreateDoc(convertedNew);
+                //docPgeViewerNew.Document = TryCreateDoc(convertedNew);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private static FlowDocument TryCreateDoc(string text)

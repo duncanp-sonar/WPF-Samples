@@ -1,0 +1,27 @@
+<p>To ensure future code portability, obsolete POSIX functions should be removed. Those functions, with their replacements are listed below:</p>
+<table>
+  <colgroup>
+    <col style="width: 50%;">
+    <col style="width: 50%;">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Obsolete</th>
+      <th>Use Instead</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><p>asctime</p></td>
+      <td><p>strftime</p></td>
+    </tr>
+    <tr>
+      <td><p>pthread_attr_setstackaddr</p></td>
+      <td><p>pthread_attr_setstack</p></td>
+    </tr>
+    <tr>
+      <td><p>rindex</p></td>
+      <td><p>strrchr</p></td>
+    </tr>
+    tbody>
+</table>
