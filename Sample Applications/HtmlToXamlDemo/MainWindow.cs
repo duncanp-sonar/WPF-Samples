@@ -129,5 +129,50 @@ void doSomething (void);
                 ConvertHtmlToXaml(myTextBox.Text);
             }
         }
+
+        private void TestButton_Click(object sender, RoutedEventArgs e)
+        {
+            const string rootFileDirectory = "d:\\repos\\sq\\slvs\\src\\rules\\embedded";
+            var files = Directory.GetFiles(rootFileDirectory, "*.desc", SearchOption.AllDirectories);
+
+            txtTestResults.Text = "";
+            LogTestOutput("Files: " + files.Length);
+
+            testFilesFailed = 0;
+
+            foreach (var file in files)
+            {
+                TestConverter(file);
+            }
+
+            LogTestOutput("Files: " + files.Length);
+            LogTestOutput("Failed: " + testFilesFailed);
+
+        }
+
+        private int testFilesFailed = 0;
+
+        private void TestConverter(string file)
+        {
+            var text = File.ReadAllText(file);
+
+            try
+            {
+                var xaml = XHtmlToXamlConverter.Convert(text);
+                TryCreateDoc(xaml);
+            }
+            catch (Exception ex)
+            {
+                LogTestOutput($"Failed: {file}, {ex.Message}");
+                testFilesFailed++;
+            }
+        }
+
+        private void LogTestOutput(string text)
+        {
+            var allText = txtTestResults.Text + Environment.NewLine + text;
+            txtTestResults.Text = allText;
+            txtTestResults.SelectionStart= txtTestResults.Text.Length;
+        }
     }
 }

@@ -19,6 +19,8 @@ TODO:
 col
 colgroup
 
+Nested lists e.g. d:\repos\sq\slvs\src\rules\embedded\c\S1749.desc
+
 DONE: Handle linebreaks e.g. in compliant/non-compliant examples.
 
 

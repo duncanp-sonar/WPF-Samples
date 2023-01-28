@@ -34,7 +34,7 @@
                     <StackPanel DockPanel.Dock="Bottom"
                         Orientation="Horizontal" Margin="5">
                         <Button Click="ConvertContent" Margin="5" IsDefault="true" >Convert!</Button>
-                        <Button Click="CopyXaml" Margin="5">Copy to Clipboard</Button>
+                         <Button Click="CopyXaml" Margin="5">Copy to Clipboard</Button>
                     </StackPanel>
 
                     <Grid Margin="2">
@@ -95,6 +95,16 @@
                     <FlowDocumentScrollViewer x:Name="docScrollViewer" Grid.Column="0"/>
                     <FlowDocumentScrollViewer x:Name="docScrollViewerNew" Grid.Column="1"/>
                 </Grid>
+            </TabItem>
+
+            <TabItem Header="Test XHTML converter">
+                <DockPanel LastChildFill="True">
+                    <StackPanel Margin="10" Orientation="Vertical" DockPanel.Dock="Top">
+                        <Button Click="TestButton_Click">Test against files</Button>
+                        <Label>Results:</Label>
+                    </StackPanel>
+                    <TextBox x:Name="txtTestResults" />
+                </DockPanel>
             </TabItem>
 
             <TabItem Header="XAML to HTML">
