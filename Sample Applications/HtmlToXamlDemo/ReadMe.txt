@@ -1,16 +1,26 @@
 ﻿
+DONE:
+----
 p
 code
 h2
+h3
 pre
 ul
 li
 a, attributes: href
 em
 strong
-h3
-ol
 blockquote
+
+ol
+
+TODO:
+-----
+col
+colgroup
+
+
 
 Rule count: 2487
 Parse error count: 17

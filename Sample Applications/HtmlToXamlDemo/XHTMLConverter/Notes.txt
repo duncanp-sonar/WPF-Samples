@@ -1,0 +1,16 @@
+﻿Elements and attributes to handle
+---------------------------------
+
+
+p
+code
+h2
+pre
+ul
+li
+a, attributes: href
+em
+strong
+h3
+ol
+blockquote

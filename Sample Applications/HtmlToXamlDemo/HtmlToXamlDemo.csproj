@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ReadMe.txt" />
+    <Content Include="XHTMLConverter\Notes.txt" />
     <None Include="App.config" />
     <None Include="SampleFiles\*.desc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

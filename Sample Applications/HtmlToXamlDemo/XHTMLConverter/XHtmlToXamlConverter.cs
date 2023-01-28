@@ -50,9 +50,26 @@ namespace HtmlToXamlDemo.XHTMLConverter
                             writer.WriteString(reader.Value);
                             break;
 
+                        case XmlNodeType.Whitespace:
+                            Console.WriteLine("Text Node: {0}", reader.Value);
+                            writer.WriteString(reader.Value);
+                            break;
+
+                        case XmlNodeType.SignificantWhitespace:
+                            Console.WriteLine("Text Node: {0}", reader.Value);
+                            writer.WriteString(reader.Value);
+                            break;
+
                         case XmlNodeType.EndElement:
                             Console.WriteLine("End Element {0}", reader.Name);
                             writer.WriteEndElement();
+                            
+                            // TODO - special cases: sometimes the HTML tag translates to multiple
+                            // XAML tags, so we need to write more than one end element.
+                            if(reader.Name == "li")
+                            {
+                                writer.WriteEndElement();
+                            }
                             break;
                         default:
                             Console.WriteLine("Other node {0} with value {1}",
@@ -84,6 +101,26 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteAttributeString("FontSize", "20pt");
                     break;
 
+                case "h3":
+                    writer.WriteStartElement("Paragraph");
+                    writer.WriteAttributeString("FontSize", "18pt");
+                    break;
+
+                case "em":
+                    writer.WriteStartElement("Run");
+                    writer.WriteAttributeString("FontStyle", "italic");
+                    break;
+
+                case "strong":
+                    writer.WriteStartElement("Run");
+                    writer.WriteAttributeString("FontWeight", "bold");
+                    break;
+
+                case "blockquote":
+                    writer.WriteStartElement("Paragraph");
+                    writer.WriteAttributeString("Margin", "16,0,0,0");
+                    break;
+
                 case "pre":
                     writer.WriteStartElement("Paragraph");
                     writer.WriteAttributeString("FontSize", "8pt");
@@ -101,19 +138,34 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteAttributeString("NavigateUri", href);
                     break;
 
+                case "ul":
+                    writer.WriteStartElement("List");
+                    writer.WriteAttributeString("MarkerStyle", "Disc");
+                    break;
+
+                case "ol":
+                    writer.WriteStartElement("List");
+                    writer.WriteAttributeString("MarkerStyle", "Decimal");
+                    break;
+
+                case "li":
+                    writer.WriteStartElement("ListItem");
+                    writer.WriteStartElement("Paragraph");
+                    break;
+
                 default:
                     writer.WriteStartElement(reader.Name);
                     writer.WriteEndElement();
                     break;
             }
-
         }
 
         private static XmlReader CreateXmlReader(string data)
         {
             var settings = new XmlReaderSettings
             {
-                ConformanceLevel= ConformanceLevel.Fragment
+                ConformanceLevel = ConformanceLevel.Fragment,
+                IgnoreWhitespace = false,
             };
 
             var stream = new StringReader(data);
@@ -130,7 +182,8 @@ namespace HtmlToXamlDemo.XHTMLConverter
                 Encoding = Encoding.UTF8,
                 OmitXmlDeclaration = true,
                 Indent = true,
-                CloseOutput = true
+                CloseOutput = true,
+                WriteEndDocumentOnClose = true
             };
 
             var writer = XmlWriter.Create(stringWriter, settings);
