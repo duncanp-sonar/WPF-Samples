@@ -45,12 +45,15 @@ namespace HtmlToXamlDemo.XHTMLConverter
                             break;
 
                         case XmlNodeType.Text:
-                            Console.WriteLine("Text Node: {0}", reader.Value);
+                            //WriteText(reader.Value);
 
+                            Console.WriteLine("Text Node: {0}", reader.Value);
                             writer.WriteString(reader.Value);
                             break;
 
                         case XmlNodeType.Whitespace:
+                            //WriteText(reader.Value);
+
                             Console.WriteLine("Text Node: {0}", reader.Value);
                             writer.WriteString(reader.Value);
                             break;
@@ -88,6 +91,22 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
             return sb.ToString();
         }
+
+        //private void WriteText(string text)
+        //{
+        //    if (!text.Contains("\n"))
+        //    {
+        //        writer.WriteString(text);
+        //        return;
+        //    }
+
+        //    var lines = text.Split(new char[] { '\n' }, StringSplitOptions.None);
+        //    foreach(var line in lines)
+        //    {
+        //        writer.WriteString(line);
+        //        writer.WriteElementString("LineBreak", "");
+        //    }
+        //}
 
         private void ProcessElement()
         {

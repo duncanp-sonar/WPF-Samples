@@ -90,7 +90,7 @@ void doSomething (void);
             }
             catch (Exception ex)
             {
-                txtConvertedNew.Text = ex.Message;
+                txtConvertedNew.Text = ex.Message + Environment.NewLine + Environment.NewLine + txtConvertedNew;
             }
         }
 

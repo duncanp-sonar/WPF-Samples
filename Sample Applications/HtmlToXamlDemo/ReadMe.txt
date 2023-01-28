@@ -19,6 +19,8 @@ TODO:
 col
 colgroup
 
+Handle linebreaks e.g. in compliant/non-compliant examples.
+
 
 
 Rule count: 2487
