@@ -5,11 +5,11 @@ using HtmlToXamlDemo.XHTMLConverter;
 using System;
 using System.IO;
 using System.Linq;
-using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Markup;
+using System.Windows.Navigation;
 
 namespace HtmlToXamlDemo
 {
@@ -89,8 +89,11 @@ void doSomething (void);
             exp = new Regex("(?<element>((<col\\s*)|(col\\s+[^/^>]*)))>");
 
             modified = exp.Replace(input, "${element}/>");
+        }
 
-
+        private void HandleRequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            MessageBox.Show("Uri: " + e.Uri.ToString());
         }
 
         private SampleFile[] GetSampleFiles()

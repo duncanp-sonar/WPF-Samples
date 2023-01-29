@@ -72,7 +72,7 @@
                     </Grid.ColumnDefinitions>
 
                     <FlowDocumentReader x:Name="docReader" Grid.Column="0"/>
-                    <FlowDocumentReader x:Name="docReaderNew" Grid.Column="1"/>
+                    <FlowDocumentReader x:Name="docReaderNew" Grid.Column="1" Hyperlink.RequestNavigate="HandleRequestNavigate" />
                 </Grid>
             </TabItem>
             <TabItem Header="Converted XAML - page viewer">
