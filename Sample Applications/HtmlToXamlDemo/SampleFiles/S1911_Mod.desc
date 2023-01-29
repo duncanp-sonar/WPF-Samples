@@ -1,0 +1,131 @@
+<p>To ensure future code portability, obsolete POSIX functions should be removed. Those functions, with their replacements are listed below:</p>
+<table>
+  <colgroup>
+    <col style="width: 50%;">
+      <col style="width: 50%;">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Obsolete</th>
+      <th>Use Instead</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>asctime</td>
+      <td>strftime</td>
+    </tr>
+    <tr>
+      <td>asctime_r</td>
+      <td>strftime</td>
+    </tr>
+    <tr>
+      <td>bcmp</td>
+      <td>memcmp</td>
+    </tr>
+    <tr>
+      <td>bcopy</td>
+      <td>memmove memcpy</td>
+    </tr>
+    <tr>
+      <td>bsd_signal</td>
+      <td>sigaction</td>
+    </tr>
+    <tr>
+      <td>bzero</td>
+      <td>memset</td>
+    </tr>
+    <tr>
+      <td>ctime</td>
+      <td>strftime</td>
+    </tr>
+    <tr>
+      <td>ecvt</td>
+      <td>sprintf</td>
+    </tr>
+    <tr>
+      <td>fcvt</td>
+      <td>sprintf</td>
+    </tr>
+    <tr>
+      <td>ftime</td>
+      <td>no replacement function</td>
+    </tr>
+    <tr>
+      <td>gcvt</td>
+      <td>sprintf</td>
+    </tr>
+    <tr>
+      <td>getcontext</td>
+      <td>Rewrite to use POSIX threads.</td>
+    </tr>
+    <tr>
+      <td>gethostbyaddr</td>
+      <td>getnameinfo</td>
+    </tr>
+    <tr>
+      <td>gethostbyname</td>
+      <td>getaddrinfo</td>
+    </tr>
+    <tr>
+      <td>getwd</td>
+      <td>getcwd</td>
+    </tr>
+    <tr>
+      <td>index</td>
+      <td>strchr</td>
+    </tr>
+    <tr>
+      <td>makecontext</td>
+      <td>Rewrite to use POSIX threads.</td>
+    </tr>
+    <tr>
+      <td>mktemp</td>
+      <td>mkstemp</td>
+    </tr>
+    <tr>
+      <td>pthread_attr_getstackaddr</td>
+      <td>pthread_attr_getstack</td>
+    </tr>
+    <tr>
+      <td>pthread_attr_setstackaddr</td>
+      <td>pthread_attr_setstack</td>
+    </tr>
+    <tr>
+      <td>rand_r</td>
+      <td>rand</td>
+    </tr>
+    <tr>
+      <td>rindex</td>
+      <td>strrchr</td>
+    </tr>
+    <tr>
+      <td>scalb</td>
+      <td>scalbln', 'scalblnf' or 'scalblnl' instead of this function</td>
+    </tr>
+    <tr>
+      <td>swapcontext</td>
+      <td>Rewrite to use POSIX threads.</td>
+    </tr>
+    <tr>
+      <td>ualarm</td>
+      <td>'timer_create', 'timer_delete', 'timer_getoverrun', 'timer_gettime', or 'timer_settime' instead of this function</td>
+    </tr>
+    <tr>
+      <td>usleep</td>
+      <td>nanosleep' or 'setitimer' function</td>
+    </tr>
+    <tr>
+      <td>utime</td>
+      <td>utimensat</td>
+    </tr>
+    <tr>
+      <td>vfork</td>
+      <td>fork</td>
+    </tr>
+    <tr>
+      <td>wcswcs</td>
+      <td>wcsstr</td>
+    </tr>
+  </tbody>
+</table>
