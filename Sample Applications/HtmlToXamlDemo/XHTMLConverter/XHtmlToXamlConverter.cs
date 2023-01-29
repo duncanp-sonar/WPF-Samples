@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Markup;
 using System.Xml;
 
 namespace HtmlToXamlDemo.XHTMLConverter
@@ -13,15 +14,11 @@ namespace HtmlToXamlDemo.XHTMLConverter
         public static string Convert(string xhtml)
             => new XHtmlToXamlConverter().Process(xhtml);
 
-
         private XmlWriter writer;
         private XmlReader reader;
 
-
         private string Process(string data)
         {
-            data = data.Replace("&nbsp;", "&#160;");
-
             data = CleanHtml(data);
 
             var sb = new StringBuilder();
@@ -63,10 +60,10 @@ namespace HtmlToXamlDemo.XHTMLConverter
                         case XmlNodeType.EndElement:
                             Console.WriteLine("End Element {0}", reader.Name);
                             writer.WriteEndElement();
-                            
+
                             // TODO - special cases: sometimes the HTML tag translates to multiple
                             // XAML tags, so we need to write more than one end element.
-                            if(reader.Name == "li")
+                            if(reader.Name == "li" || reader.Name == "th" || reader.Name == "td")
                             {
                                 writer.WriteEndElement();
                             }
@@ -105,7 +102,7 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     break;
 
                 case "br":
-                    writer.WriteElementString("LineBreak", "");
+                    WriteElement("LineBreak");
                     break;
 
                 case "code":
@@ -158,41 +155,55 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     break;
 
                 case "table":
-                    writer.WriteStartElement("Section");
+                    writer.WriteStartElement("Table");
                     break;
 
                 case "colgroup":
-                    writer.WriteStartElement("Paragraph");
+                    writer.WriteStartElement("Table.Columns");
                     break;
 
                 case "col":
-                    writer.WriteStartElement("Run");
+                    WriteElement("TableColumn");
                     break;
 
                 case "thead":
-                    writer.WriteStartElement("Section");
+                    writer.WriteStartElement("TableRowGroup");
                     break;
 
                 case "tr":
-                    writer.WriteStartElement("Paragraph");
+                    writer.WriteStartElement("TableRow");
                     break;
 
                 case "th":
-                    writer.WriteStartElement("Run");
+                    writer.WriteStartElement("TableCell");
+                    writer.WriteStartElement("Paragraph");
                     break;
 
                 case "tbody":
-                    writer.WriteStartElement("Section");
+                    writer.WriteStartElement("TableRowGroup");
                     break;
 
                 case "td":
-                    writer.WriteStartElement("Run");
+                    writer.WriteStartElement("TableCell");
+                    writer.WriteStartElement("Paragraph");
                     break;
 
                 default:
                     writer.WriteStartElement(reader.Name);
                     writer.WriteEndElement();
                     break;
+            }
+        }
+
+        private void WriteElement(string name)
+        {
+            if (reader.IsEmptyElement)
+            {
+                writer.WriteElementString(name, "");
+            }
+            else
+            {
+                writer.WriteStartElement(name);
             }
         }
 
@@ -231,7 +242,8 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
         private static string CleanHtml(string text)
         {
-            var cleaned = cleanCol.Replace(text, "${element}/>");
+            var cleaned = text.Replace("&nbsp;", "&#160;");
+            cleaned = cleanCol.Replace(cleaned, "${element}/>");
             cleaned = cleanBr.Replace(cleaned, "${element}/>");
 
             return cleaned;
