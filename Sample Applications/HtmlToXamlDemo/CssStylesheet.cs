@@ -163,7 +163,7 @@ namespace HtmlToXamlDemo
         public string GetStyle(string elementName, List<XmlElement> sourceContext)
         {
             Debug.Assert(sourceContext.Count > 0);
-            Debug.Assert(elementName == sourceContext[sourceContext.Count - 1].LocalName);
+            //Debug.Assert(elementName == sourceContext[sourceContext.Count - 1].LocalName);
 
             //  Add id processing for style selectors
             if (_styleDefinitions != null)

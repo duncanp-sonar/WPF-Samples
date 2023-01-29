@@ -86,6 +86,8 @@ namespace HtmlToXamlDemo.XHTMLConverter
             return sb.ToString();
         }
 
+        private bool tableAlternateRow;
+
         private void ProcessElement()
         {
             switch(reader.Name)
@@ -156,6 +158,8 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
                 case "table":
                     writer.WriteStartElement("Table");
+                    writer.WriteAttributeString("BorderThickness", "1,1,1,1");
+                    writer.WriteAttributeString("BorderBrush", "Black");
                     break;
 
                 case "colgroup":
@@ -168,23 +172,35 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
                 case "thead":
                     writer.WriteStartElement("TableRowGroup");
+                    writer.WriteAttributeString("Background", "LightGray");
+                    writer.WriteAttributeString("FontWeight", "Bold");
+
                     break;
 
                 case "tr":
                     writer.WriteStartElement("TableRow");
+                    tableAlternateRow = !tableAlternateRow;
                     break;
 
                 case "th":
                     writer.WriteStartElement("TableCell");
+                    writer.WriteAttributeString("BorderThickness", "0,0,0,1");
+                    writer.WriteAttributeString("BorderBrush", "Black");
                     writer.WriteStartElement("Paragraph");
                     break;
 
                 case "tbody":
+                    tableAlternateRow = true;
                     writer.WriteStartElement("TableRowGroup");
                     break;
 
                 case "td":
                     writer.WriteStartElement("TableCell");
+                    if (tableAlternateRow)
+                    {
+                        writer.WriteAttributeString("Background", "LightBlue");
+                    }
+
                     writer.WriteStartElement("Paragraph");
                     break;
 
