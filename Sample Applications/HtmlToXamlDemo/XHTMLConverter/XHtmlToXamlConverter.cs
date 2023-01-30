@@ -142,11 +142,10 @@ namespace HtmlToXamlDemo.XHTMLConverter
             switch(reader.Name)
             {
                 case "a":
-                    writer.WriteStartElement("Hyperlink");
+                    WriteInlineElementStart("Hyperlink");
+
                     var href = reader.GetAttribute("href");
                     writer.WriteAttributeString("NavigateUri", href);
-
-                    PushOutputElementInfo("a", true, false);
 
                     break;
 
@@ -159,23 +158,18 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     break;
 
                 case "br":
-                    WriteElement("LineBreak");
+                    WriteEmptyElement("LineBreak");
                     PushOutputElementInfo("br", true, false);
 
                     break;
 
                 case "code":
-                    writer.WriteStartElement("Run");
-                    PushOutputElementInfo("code", true, false);
+                    WriteInlineElementStart("Run");
 
                     break;
 
                 case "em":
-                    writer.WriteStartElement("Run");
-                    writer.WriteAttributeString("FontStyle", "italic");
-
-                    PushOutputElementInfo("em", true, false);
-
+                    WriteInlineElementStart("Italic");
                     break;
 
                 case "h2":
@@ -225,10 +219,8 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     break;
 
                 case "strong":
-                    writer.WriteStartElement("Run");
-                    writer.WriteAttributeString("FontWeight", "bold");
+                    WriteInlineElementStart("Bold");
 
-                    PushOutputElementInfo("strong", true, false);
                     break;
 
                 case "ul":
@@ -255,7 +247,7 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     break;
 
                 case "col":
-                    WriteElement("TableColumn");
+                    WriteEmptyElement("TableColumn");
                     // This is an empty element, so there is nothing to push onto the stack.
 
                     break;
@@ -316,16 +308,16 @@ namespace HtmlToXamlDemo.XHTMLConverter
             }
         }
 
-        private void WriteElement(string name)
+        private void WriteEmptyElement(string name, string value = null)
         {
-            if (reader.IsEmptyElement)
-            {
-                writer.WriteElementString(name, "");
-            }
-            else
-            {
-                writer.WriteStartElement(name);
-            }
+            Debug.Assert(reader.IsEmptyElement);
+            writer.WriteElementString(name, value);
+        }
+
+        private void WriteInlineElementStart(string elementName)
+        {
+            writer.WriteStartElement(elementName);
+            PushOutputElementInfo(reader.Name, true, false);
         }
 
         private static XmlReader CreateXmlReader(string data)
