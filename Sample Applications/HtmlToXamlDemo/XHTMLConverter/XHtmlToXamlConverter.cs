@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Markup;
 using System.Xml;
 
 namespace HtmlToXamlDemo.XHTMLConverter
@@ -17,6 +18,42 @@ namespace HtmlToXamlDemo.XHTMLConverter
         private XmlWriter writer;
         private XmlReader reader;
 
+        private Stack<XamlOutputElementInfo> outputXamlElementStack = new Stack<XamlOutputElementInfo>();
+
+        /// <summary>
+        /// Information about a single XAML output element written to the new stream of XAML.
+        /// </summary>
+        private struct XamlOutputElementInfo
+        {
+            public XamlOutputElementInfo(string htmlElementName, bool isInline, bool supportsInlines)
+            {
+                HtmlElementName= htmlElementName;
+                IsInline= isInline;
+                SupportsInlines= supportsInlines;
+            }
+
+            /// <summary>
+            /// True if the XAML element corresponds directly to a specific HTML element in the
+            /// source document, otherwise false
+            /// </summary>
+            public bool MapsDirectlyToHtmlElement => !string.IsNullOrEmpty(HtmlElementName);
+
+            /// <summary>
+            /// The HTML element that the XAML element corresponds to
+            /// </summary>
+            public string HtmlElementName { get; }
+
+            /// <summary>
+            /// True if the XAML element needs to be parented under an element that supports inlines
+            /// </summary>
+            public bool IsInline { get; }
+
+            /// <summary>
+            /// True if the XAML element supports inlines as children (e.g. Run, text), otherwise false
+            /// </summary>
+            public bool SupportsInlines { get; }
+        }
+
         private string Process(string data)
         {
             data = CleanHtml(data);
@@ -28,9 +65,12 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
             try
             {
+                
                 writer.WriteStartElement("FlowDocument", XamlNamespace);
                 writer.WriteAttributeString("xml", "space", null, "preserve");
                 writer.WriteAttributeString("xmlns", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
+
+                outputXamlElementStack.Push(new XamlOutputElementInfo("html root", false, false));
 
                 while (reader.Read())
                 {
@@ -59,14 +99,14 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
                         case XmlNodeType.EndElement:
                             Console.WriteLine("End Element {0}", reader.Name);
-                            writer.WriteEndElement();
 
-                            // TODO - special cases: sometimes the HTML tag translates to multiple
-                            // XAML tags, so we need to write more than one end element.
-                            if(reader.Name == "li" || reader.Name == "th" || reader.Name == "td")
+                            XamlOutputElementInfo xamlOutputElement;
+                            do
                             {
+                                xamlOutputElement = outputXamlElementStack.Pop();
                                 writer.WriteEndElement();
-                            }
+                            } while (xamlOutputElement.HtmlElementName != reader.Name);
+
                             break;
                         default:
                             Console.WriteLine("Other node {0} with value {1}",
@@ -83,10 +123,19 @@ namespace HtmlToXamlDemo.XHTMLConverter
                 writer.Close();
             }
 
+            Debug.Assert(outputXamlElementStack.Count == 1
+                && outputXamlElementStack.Peek().HtmlElementName == "html root",
+                "Expecting the stack to contain the initial flow document element");
+
             return sb.ToString();
         }
 
         private bool tableAlternateRow;
+
+        private void PushOutputElementInfo(string htmlElementName, bool isInline, bool supportsInlines)
+        {
+            outputXamlElementStack.Push(new XamlOutputElementInfo(htmlElementName, isInline, supportsInlines));
+        }
 
         private void ProcessElement()
         {
@@ -96,47 +145,74 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteStartElement("Hyperlink");
                     var href = reader.GetAttribute("href");
                     writer.WriteAttributeString("NavigateUri", href);
+
+                    PushOutputElementInfo("a", true, false);
+
                     break;
 
                 case "blockquote":
                     writer.WriteStartElement("Paragraph");
                     writer.WriteAttributeString("Margin", "16,0,0,0");
+
+                    PushOutputElementInfo("blockquote", false, true);
+
                     break;
 
                 case "br":
                     WriteElement("LineBreak");
+                    PushOutputElementInfo("br", true, false);
+
                     break;
 
                 case "code":
                     writer.WriteStartElement("Run");
+                    PushOutputElementInfo("code", true, false);
+
                     break;
 
                 case "em":
                     writer.WriteStartElement("Run");
                     writer.WriteAttributeString("FontStyle", "italic");
+
+                    PushOutputElementInfo("em", true, false);
+
                     break;
 
                 case "h2":
                     writer.WriteStartElement("Paragraph");
                     writer.WriteAttributeString("FontSize", "20pt");
+
+                    PushOutputElementInfo("h2", false, true);
                     break;
 
                 case "h3":
                     writer.WriteStartElement("Paragraph");
                     writer.WriteAttributeString("FontSize", "18pt");
+
+                    PushOutputElementInfo("h3", false, true);
                     break;
 
                 case "li":
                     writer.WriteStartElement("ListItem");
                     writer.WriteStartElement("Paragraph");
+
+                    PushOutputElementInfo("li", false, false);
+                    PushOutputElementInfo(null, false, true);
+
                     break;
 
                 case "ol":
                     writer.WriteStartElement("List");
                     writer.WriteAttributeString("MarkerStyle", "Decimal");
+
+                    PushOutputElementInfo("ol", false, false);
+
                     break;
 
                 case "p" : writer.WriteStartElement("Paragraph");
+
+                    PushOutputElementInfo("p", false, true);
+
                     break;
 
                 case "pre":
@@ -144,30 +220,44 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteAttributeString("FontSize", "8pt");
                     writer.WriteAttributeString("TextAlignment", "Left");
                     writer.WriteAttributeString("FontFamily", "Courier New");
+
+                    PushOutputElementInfo("pre", false, true);
                     break;
 
                 case "strong":
                     writer.WriteStartElement("Run");
                     writer.WriteAttributeString("FontWeight", "bold");
+
+                    PushOutputElementInfo("strong", true, false);
                     break;
 
                 case "ul":
                     writer.WriteStartElement("List");
                     writer.WriteAttributeString("MarkerStyle", "Disc");
+
+                    PushOutputElementInfo("ul", false, false);
+
                     break;
 
                 case "table":
                     writer.WriteStartElement("Table");
                     writer.WriteAttributeString("BorderThickness", "1,1,1,1");
                     writer.WriteAttributeString("BorderBrush", "Black");
+
+                    PushOutputElementInfo("table", false, false);
+
                     break;
 
                 case "colgroup":
                     writer.WriteStartElement("Table.Columns");
+                    PushOutputElementInfo("colgroup", false, false);
+
                     break;
 
                 case "col":
                     WriteElement("TableColumn");
+                    // This is an empty element, so there is nothing to push onto the stack.
+
                     break;
 
                 case "thead":
@@ -175,11 +265,16 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteAttributeString("Background", "LightGray");
                     writer.WriteAttributeString("FontWeight", "Bold");
 
+                    PushOutputElementInfo("thead", false, false);
+
                     break;
 
                 case "tr":
                     writer.WriteStartElement("TableRow");
                     tableAlternateRow = !tableAlternateRow;
+
+                    PushOutputElementInfo("tr", false, false);
+
                     break;
 
                 case "th":
@@ -187,11 +282,17 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteAttributeString("BorderThickness", "0,0,0,1");
                     writer.WriteAttributeString("BorderBrush", "Black");
                     writer.WriteStartElement("Paragraph");
+
+                    PushOutputElementInfo("th", false, false);
+                    PushOutputElementInfo(null, false, true);
+
                     break;
 
                 case "tbody":
                     tableAlternateRow = true;
                     writer.WriteStartElement("TableRowGroup");
+                    PushOutputElementInfo("tbody", false, false);
+
                     break;
 
                 case "td":
@@ -202,6 +303,10 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     }
 
                     writer.WriteStartElement("Paragraph");
+
+                    PushOutputElementInfo("td", false, false);
+                    PushOutputElementInfo(null, false, true);
+
                     break;
 
                 default:
