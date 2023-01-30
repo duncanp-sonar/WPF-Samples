@@ -150,10 +150,11 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     break;
 
                 case "blockquote":
-                    writer.WriteStartElement("Paragraph");
+                    writer.WriteStartElement("Section");
                     writer.WriteAttributeString("Margin", "16,0,0,0");
+                    writer.WriteAttributeString("Background", "LightGray");
 
-                    PushOutputElementInfo("blockquote", false, true);
+                    PushOutputElementInfo("blockquote", false, false);
 
                     break;
 
