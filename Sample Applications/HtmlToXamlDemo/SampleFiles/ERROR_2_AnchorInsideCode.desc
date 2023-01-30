@@ -1,0 +1,16 @@
+<p>
+  MS version: Hyperlink inside code = Span, Hyperlink
+  <code>
+    <a
+href="https://docs.microsoft.com/en-us/dotnet/api/system.codedom.compiler.tempfilecollection.-ctor?view=netframework-4.8#System_CodeDom_Compiler_TempFileCollection__ctor">TempFileCollection</a>
+  </code>
+</p>
+<p>
+  MS version: just code = Run
+  <code> more code </code>
+</p>
+<p>
+  text2
+  <a
+href="https://docs.microsoft.com/en-us/dotnet/api/system.codedom.compiler.tempfilecollection.-ctor?view=netframework-4.8#System_CodeDom_Compiler_TempFileCollection__ctor">TempFileCollection</a>
+</p>
