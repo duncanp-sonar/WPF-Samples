@@ -84,7 +84,7 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
                         case XmlNodeType.Text:
                             Console.WriteLine("Text Node: {0}", reader.Value);
-                            writer.WriteString(reader.Value);
+                            WriteText(reader.Value);
                             break;
 
                         case XmlNodeType.Whitespace:
@@ -188,10 +188,7 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
                 case "li":
                     writer.WriteStartElement("ListItem");
-                    writer.WriteStartElement("Paragraph");
-
                     PushOutputElementInfo("li", false, false);
-                    PushOutputElementInfo(null, false, true);
 
                     break;
 
@@ -273,11 +270,8 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     writer.WriteStartElement("TableCell");
                     writer.WriteAttributeString("BorderThickness", "0,0,0,1");
                     writer.WriteAttributeString("BorderBrush", "Black");
-                    writer.WriteStartElement("Paragraph");
-
                     PushOutputElementInfo("th", false, false);
-                    PushOutputElementInfo(null, false, true);
-
+                    
                     break;
 
                 case "tbody":
@@ -289,19 +283,17 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
                 case "td":
                     writer.WriteStartElement("TableCell");
+                    PushOutputElementInfo("td", false, false);
+
                     if (tableAlternateRow)
                     {
                         writer.WriteAttributeString("Background", "LightBlue");
                     }
 
-                    writer.WriteStartElement("Paragraph");
-
-                    PushOutputElementInfo("td", false, false);
-                    PushOutputElementInfo(null, false, true);
-
                     break;
 
                 default:
+                    Debug.Fail("Unexpected element type: " + reader.Name);
                     writer.WriteStartElement(reader.Name);
                     writer.WriteEndElement();
                     break;
@@ -316,8 +308,32 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
         private void WriteInlineElementStart(string elementName)
         {
+            // If we are writing an inline element, we need a parent element that supports inlines.
+
+            // This might/might not be the case.
+            // e.g. <li><p> some text ... </p><li>      -> <p> does support inlines, so we can just write the text
+            // e.g. <li> some text ... </li>            -> <li> does not support inlines directly.
+            EnsureCurrentOutputSupportsInlines();
+
             writer.WriteStartElement(elementName);
-            PushOutputElementInfo(reader.Name, true, false);
+            PushOutputElementInfo(reader.Name, true, true);
+        }
+
+        private void WriteText(string text)
+        {
+            // If we are writing an inline element, we need a parent element that supports inlines
+            EnsureCurrentOutputSupportsInlines();
+
+            writer.WriteString(text);
+        }
+
+        private void EnsureCurrentOutputSupportsInlines()
+        {
+            var current = outputXamlElementStack.Peek();
+            if (current.SupportsInlines) { return; }
+
+            writer.WriteStartElement("Paragraph");
+            PushOutputElementInfo(null, false, true);
         }
 
         private static XmlReader CreateXmlReader(string data)
