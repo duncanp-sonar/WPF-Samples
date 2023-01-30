@@ -193,7 +193,8 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     break;
 
                 case "ol":
-                    writer.WriteStartElement("List");
+                    WriteBlockElementStart("List");
+                    //writer.WriteStartElement("List");
                     writer.WriteAttributeString("MarkerStyle", "Decimal");
 
                     PushOutputElementInfo("ol", false, false);
@@ -223,7 +224,7 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     break;
 
                 case "ul":
-                    writer.WriteStartElement("List");
+                    WriteBlockElementStart("List");
                     writer.WriteAttributeString("MarkerStyle", "Disc");
 
                     PushOutputElementInfo("ul", false, false);
@@ -328,7 +329,6 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
             writer.WriteString(text);
         }
-
         private void EnsureCurrentOutputSupportsInlines()
         {
             var current = outputXamlElementStack.Peek();
@@ -336,6 +336,65 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
             writer.WriteStartElement("Paragraph");
             PushOutputElementInfo(null, false, true);
+        }
+
+        private void WriteBlockElementStart(string elementName)
+        {
+            EnsureCurrentOutputSupportsBlocks();
+            writer.WriteStartElement(elementName);
+        }
+
+        private void EnsureCurrentOutputSupportsBlocks()
+        {
+            var current = outputXamlElementStack.Peek();
+            // Assumes supporting blocks and inlines are mutually exclusive, which
+            // is the case for all the WPF document classes we are using.
+            if (!current.SupportsInlines) { return; }
+
+            // If we are in an element that supports inlines, we can't add another child element
+            // that supports blocks because there are no WPF classes that do that.
+            // Instead, all we can do is close the current element(s) recursively until we find
+            // an existing output element that does support blocks.
+            //
+            // However, we can only walk back as far as the nearest parent output element that was
+            // directly mapped to an html element (otherwise we'll fail later when we try to process
+            // the matching closing html token).
+            // In other words, we can only walk back up the stack closing "extra" elements we added
+            // ourselves, that don't map to a specific html tag.
+
+            // e.g. nested lists - c_s1749.desc
+            // 1. <ol> 
+            // 2.     <li> type name, spelling of built-in types with more than one type-specifier:
+            // 3.        <ol>
+            // 4.             <li> signedness - <code>signed</code> or <code>unsigned</code> </li>
+
+            // For line 2, we will generate:
+            // a.  <List>           <-- mapped to html <ol>
+            // b.    <ListItem>     <-- mapped to html <li>
+            // c.      <Paragraph>  <-- extra element added by us, not mapped to an html element
+            // d.        type name, spelling of..       <-- text from the html
+
+            // In the example above, we add the extra <Paragraph> XAML opening tag, since we need
+            // a paragraph to hold the text.
+            // However, we then encounter the html <ol> element, which translates to another
+            // XAML <List>. "List" is a block element, so we can't host it under <Paragraph>.
+            // So, we close the <Paragraph> element and look at its parent, <ListItem>.
+            // "ListItem" can contain blocks, so we can now add the new <List> opening tag.
+            // Note: the <ListItem> in line 2 is as far back as we can check, since it is mapped
+            // directly to an html element (<li>).
+
+            while (current.HtmlElementName == null && current.SupportsInlines)
+            {
+                writer.WriteEndElement();
+                outputXamlElementStack.Pop();
+
+                current = outputXamlElementStack.Peek();
+            }
+
+            if (current.SupportsInlines)
+            {
+                throw new InvalidOperationException("Invalid state: can't find an element that supports blocks");
+            }
         }
 
         private static XmlReader CreateXmlReader(string data)
