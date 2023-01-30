@@ -159,8 +159,8 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     break;
 
                 case "br":
+                    // This is an empty element, so there is nothing to push onto the stack.
                     WriteEmptyElement("LineBreak");
-                    PushOutputElementInfo("br", true, false);
 
                     break;
 
@@ -248,8 +248,8 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     break;
 
                 case "col":
-                    WriteEmptyElement("TableColumn");
                     // This is an empty element, so there is nothing to push onto the stack.
+                    WriteEmptyElement("TableColumn");
 
                     break;
 

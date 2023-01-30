@@ -120,11 +120,13 @@ void doSomething (void);
             docScrollViewer.Document = TryCreateDoc(converted);
             docPgeViewer.Document = TryCreateDoc(converted);
 
-            string convertedNew = XHtmlToXamlConverter.Convert(myTextBox.Text);
-            txtConvertedNew.Text = convertedNew;
+            string convertedNew = "";
 
             try
             {
+                convertedNew = XHtmlToXamlConverter.Convert(myTextBox.Text);
+                txtConvertedNew.Text = convertedNew;
+
                 docReaderNew.Document = TryCreateDoc(convertedNew);
                 docScrollViewerNew.Document = TryCreateDoc(convertedNew);
                 docPgeViewerNew.Document = TryCreateDoc(convertedNew);
