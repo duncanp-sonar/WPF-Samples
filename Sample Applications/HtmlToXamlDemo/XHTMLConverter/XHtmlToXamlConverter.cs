@@ -232,7 +232,7 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     break;
 
                 case "table":
-                    writer.WriteStartElement("Table");
+                    WriteBlockElementStart("Table");
                     writer.WriteAttributeString("BorderThickness", "1,1,1,1");
                     writer.WriteAttributeString("BorderBrush", "Black");
 
