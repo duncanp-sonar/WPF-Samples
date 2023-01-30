@@ -200,7 +200,9 @@ namespace HtmlToXamlDemo.XHTMLConverter
 
                     break;
 
-                case "p" : writer.WriteStartElement("Paragraph");
+                case "p" :
+                    writer.WriteStartElement("Paragraph");
+                    writer.WriteAttributeString("xml", "space", null, "default");
 
                     PushOutputElementInfo("p", false, true);
 
