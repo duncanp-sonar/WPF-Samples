@@ -165,7 +165,7 @@ namespace HtmlToXamlDemo.XHTMLConverter
                     break;
 
                 case "code":
-                    WriteInlineElementStart("Run");
+                    WriteInlineElementStart("Span");
 
                     break;
 
