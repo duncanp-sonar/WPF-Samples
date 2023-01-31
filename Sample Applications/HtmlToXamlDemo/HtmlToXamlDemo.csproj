@@ -73,7 +73,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="XHTMLConverter\XamlElementInfo.cs" />
+    <Compile Include="XHTMLConverter\XamlOutputEelementInfo.cs" />
     <Compile Include="XHTMLConverter\XHtmlToXamlConverter.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
