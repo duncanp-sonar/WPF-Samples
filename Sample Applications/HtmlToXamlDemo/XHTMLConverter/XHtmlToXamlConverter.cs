@@ -335,9 +335,7 @@ namespace HtmlToXamlDemo.XHTMLConverter
         private void EnsureCurrentOutputSupportsBlocks()
         {
             var current = outputXamlElementStack.Peek();
-            // Assumes supporting blocks and inlines are mutually exclusive, which
-            // is the case for all the WPF document classes we are using.
-            if (!current.SupportsInlines) { return; }
+            if (current.SupportsBlocks) { return; }
 
             // If we are in an element that supports inlines, we can't add another child element
             // that supports blocks because there are no WPF classes that do that.
@@ -356,14 +354,30 @@ namespace HtmlToXamlDemo.XHTMLConverter
             // 3.        <ol>
             // 4.             <li> signedness - <code>signed</code> or <code>unsigned</code> </li>
 
-            // For line 2, we will generate:
+            // This produces the following XAML:
             // a.  <List>           <-- mapped to html <ol>
             // b.    <ListItem>     <-- mapped to html <li>
+            //
+            //                      // Next, we want to add the text from line 2. However, we
+            //                      // can't add text to ListItem since it only accepts blocks.
+            //                      // So, we add a Paragraph, which is a block that can contain
+            //                      // Inlines e.g. text.
+            //                      
             // c.      <Paragraph>  <-- extra element added by us, not mapped to an html element
             // d.        type name, spelling of..       <-- text from the html
+            //
+            //                      // Next, we want to handle the <ol> tag, which translates to
+            //                      // a XAML "List". List is a block, which we can't add to a
+            //                      // Paragraph. So, we need to walk back up the list of extra XAML
+            //                      // elements we have opened and close them, until we reach an
+            //                      // XAML class that supports Blocks.
+            // e.      </Paragraph> <-- close the paragraph we opened to contain the text.
+            //                      // The current XAML element is now the ListItem. This does
+            //                      // accepts Blocks, so we can stop looking.
+            // f.      <List>       <-- mapped to the nested html <li>
 
-            // In the example above, we add the extra <Paragraph> XAML opening tag, since we need
-            // a paragraph to hold the text.
+            // To summarise, in the example above, we add the extra <Paragraph> XAML opening tag,
+            // since we need a paragraph to hold the text under the ListItem.
             // However, we then encounter the html <ol> element, which translates to another
             // XAML <List>. "List" is a block element, so we can't host it under <Paragraph>.
             // So, we close the <Paragraph> element and look at its parent, <ListItem>.

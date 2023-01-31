@@ -12,12 +12,6 @@
         }
 
         /// <summary>
-        /// True if the XAML element corresponds directly to a specific HTML element in the
-        /// source document, otherwise false
-        /// </summary>
-        public bool MapsDirectlyToHtmlElement => !string.IsNullOrEmpty(HtmlElementName);
-
-        /// <summary>
         /// The HTML element that the XAML element corresponds to
         /// </summary>
         public string HtmlElementName { get; }
