@@ -89,6 +89,15 @@ void doSomething (void);
             exp = new Regex("(?<element>((<col\\s*)|(col\\s+[^/^>]*)))>");
 
             modified = exp.Replace(input, "${element}/>");
+
+            RequestNavigateEventHandler handler = HandleRequestNavigate2;
+            // TODO
+            this.AddHandler(Hyperlink.RequestNavigateEvent, handler, true);
+        }
+
+
+        private void HandleRequestNavigate2(object sender, RequestNavigateEventArgs e)
+        {
         }
 
         private void HandleRequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -138,7 +147,7 @@ void doSomething (void);
         }
 
         private static FlowDocument TryCreateDoc(string text)
-        {
+            {
             var xaml = XamlReader.Parse(text);
             return xaml as FlowDocument;
         }
